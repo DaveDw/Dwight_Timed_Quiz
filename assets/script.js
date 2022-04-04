@@ -1,6 +1,7 @@
 // go back and finishs generate
-// create the timer
 //handle displaying local storage
+
+var timerEl = document.querySelector("#timer");
 
 var qCount;
 
@@ -43,7 +44,7 @@ var q3 = {
 var q4 = {
     question: "which is not a language?",
     options: [ "Kayla", "Javascript", "CSS", "HTML"],
-    isCorrect: [true, false, false, false]
+    isCorrect: "Kayla"
 }
 
 var q5 = {
@@ -53,10 +54,29 @@ var q5 = {
 }
 var questions = [q1, q2, q3, q4, q5];
 var temp = [];
+var timeLeft = 15;
+
+// create the timer
+
+function countdown() {
+  
+    // Use the `setInterval()` method to call a function to be executed every 1000 milliseconds
+    var timeInterval = setInterval(function () {
+      console.log(--timeLeft);
+  
+      timerEl.textContent = timeLeft + " seconds left";
+  
+      if(timeLeft <= 0){
+          qCount = questions.length + 1;
+        timerEl.textContent = "Time's Up!";
+        clearInterval(timeInterval);
+        //end the game
+        localStorage.setItem( score ,prompt("Score: " + score + ". GAME OVER, enter your name:") );
+      }
+    }, 1000);
+  }
 
 function generate(b){
-    var seed;
-
     //reorder the options
     temp = [];
     for(var i = 0; i < questions[b].options.length; i){
@@ -98,6 +118,7 @@ function begin(){
         questions.push(temp[i]);
     }
 
+    countdown();
     generate(qCount);
 }
 
@@ -109,7 +130,6 @@ function begin(){
 
 container.onclick = function(event) {
 
-    qCount++;
     let target = event.target;
     if(target.textContent == "Start Quiz"){
         target.style.display = 'none';
@@ -121,12 +141,14 @@ container.onclick = function(event) {
         score++;
     }else{
         //shave time
+        timeLeft-=3;
 
     }
 
 // WHEN the game is over
 // THEN I can save my initials and my score
 
+    qCount++;
     console.log(qCount);
     if (qCount < questions.length){
         generate(qCount);
