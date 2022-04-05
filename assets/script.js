@@ -1,5 +1,4 @@
-// go back and finishs generate
-//handle displaying local storage
+
 
 var timerEl = document.querySelector("#timer");
 
@@ -56,7 +55,15 @@ var questions = [q1, q2, q3, q4, q5];
 var temp = [];
 var timeLeft = 15;
 
-// create the timer
+// WHEN all questions are answered or the timer reaches 0
+// THEN the game is over
+function endGame() {
+    
+    var name;
+    name =  prompt("Score: " + score + ". GAME OVER, enter your name:");
+    localStorage.setItem(name, score);
+    qCount = null;
+}
 
 function countdown() {
   
@@ -71,7 +78,9 @@ function countdown() {
         timerEl.textContent = "Time's Up!";
         clearInterval(timeInterval);
         //end the game
-        localStorage.setItem( score ,prompt("Score: " + score + ". GAME OVER, enter your name:") );
+        if(qCount < questions.length){
+            endGame();
+        }
       }
     }, 1000);
   }
@@ -118,8 +127,8 @@ function begin(){
         questions.push(temp[i]);
     }
 
-    countdown();
     generate(qCount);
+    countdown();
 }
 
 
@@ -127,9 +136,13 @@ function begin(){
 
 // WHEN I answer a question
 // THEN I am presented with another question
+// WHEN I answer a question incorrectly
+// THEN time is subtracted from the clock
 
 container.onclick = function(event) {
-
+    if (qCount > questions.length || qCount == null){
+        return;
+    }
     let target = event.target;
     if(target.textContent == "Start Quiz"){
         target.style.display = 'none';
@@ -152,8 +165,8 @@ container.onclick = function(event) {
     console.log(qCount);
     if (qCount < questions.length){
         generate(qCount);
-    }else if (qCount == questions.length){
-        localStorage.setItem( score ,prompt("Score: " + score + ". GAME OVER, enter your name:") );
+    }else if (qCount == questions.length && timeLeft > 0){
+        endGame();
     }
 }
 
@@ -162,12 +175,4 @@ container.onclick = function(event) {
 // THEN a timer starts and I am presented with a question
 startBtn.addEventListener("click", begin);
 
-// WHEN I answer a question incorrectly
-// THEN time is subtracted from the clock
-
-
-
-// WHEN all questions are answered or the timer reaches 0
-// THEN the game is over
-
-
+//handle displaying local storage
